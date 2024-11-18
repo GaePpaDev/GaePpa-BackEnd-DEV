@@ -1,0 +1,119 @@
+### 1. MemberId 로 OrderList 조회
+GET http://localhost:8080/api/v1/orders?memberId=0b0bd9a1-a374-11ef-a7cd-d8bbc1571db6
+
+### 결과
+#{
+#  "success": true,
+#  "response": {
+#    "orders": [
+#      {
+#        "storeId": "d191c38c-a2a1-11ef-a7cd-d8bbc1571db6",
+#        "address": {
+#          "address": "Sample Address 3",
+#          "detailAddress": null,
+#          "postAddress": 142124
+#        },
+#        "orderStatus": "주문완료",
+#        "orderType": "배달",
+#        "totalPrice": 25000,
+#        "orderRequest": "Extra napkins",
+#        "orderProductList": []
+#      }
+#    ]
+#  }
+#}
+
+
+### 1-2. OrderId 로 Order 조회
+GET http://localhost:8080/api/v1/orders/orderId?orderId=0b0bd98d-a374-11ef-a7cd-d8bbc1571db6
+
+
+### 결과
+#{
+#  "success": true,
+#  "response": {
+#    "orderId": "0b0bd98d-a374-11ef-a7cd-d8bbc1571db6",
+#    "storeId": "0b0bd9a3-a374-11ef-a7cd-d8bbc1571db6",
+#    "address": {
+#      "address": "서울시",
+#      "detailAddress": "강남구",
+#      "postAddress": 123222123
+#    },
+#    "orderStatus": "주문대기",
+#    "orderType": "배달",
+#    "totalPrice": 30000,
+#    "orderRequest": "No request",
+#    "orderProductList": [
+#      {
+#        "productId": "0b19052b-a374-11ef-a7cd-d8bbc1571db6",
+#        "productName": "미역국",
+#        "productQuantity": 2,
+#        "productOptionList": [
+#          {
+#            "optionName": "동해산 광어",
+#            "optionPrice": 99500
+#          }
+#        ]
+#      }
+#    ]
+#  }
+#}
+
+### 2. 주문 생성 테스트
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "memberId": "0b0bd9a1-a374-11ef-a7cd-d8bbc1571db6",
+  "storeId": "d191c38c-a2a1-11ef-a7cd-d8bbc1571db6",
+  "address": {
+    "address": "제주시",
+    "detailAddress": "제주공항점 파리바게트"
+  },
+  "orderType": "DELIVERY",
+  "orderRequest": "입장시 크게 외쳐주세요",
+  "orderProductList": [
+    {
+      "productId": "0b165b17-a374-11ef-a7cd-d8bbc1571db6",
+      "productQuantity": 1,
+      "productOptionList": [
+        {
+          "optionName": "꿀꿀꿀 스틱",
+          "optionPrice": 500
+        }
+      ]
+    }
+  ],
+  "payType": "CARD",
+  "payTransactionCode": "0005232"
+}
+
+###결과
+#{
+#  "success": true,
+#  "response": {
+#    "orderId": "0d62fa2f-eef3-4d7c-8809-114d479c31b4",
+#    "storeId": "d191c38c-a2a1-11ef-a7cd-d8bbc1571db6",
+#    "address": {
+#      "address": "인천시",
+#      "detailAddress": "인천공항점 파리바게트",
+#      "postAddress": 0
+#    },
+#    "orderStatus": "주문완료",
+#    "orderType": "배달",
+#    "totalPrice": 12000,
+#    "orderRequest": "노크필수",
+#    "orderProductList": [
+#      {
+#        "productId": "98a5e7a7-de7a-439a-81e7-56616bdaca0a",
+#        "productName": "요아정보다맛있는 수제요거트",
+#        "productQuantity": 1,
+#        "productOptionList": []
+#      }
+#    ]
+#  }
+#}
+
+### 3. 주문 취소 요청
+### 주문 취소: 주문 생성 후 5분 이내에만 취소 가능하도록 제한
+PATCH http://localhost:8080/api/v1/orders?orderId=cb17a80c-6e85-4a06-8ffb-81ea21c0ed3e

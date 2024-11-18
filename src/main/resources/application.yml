@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: GaePpa
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  profiles:
+    # develop : develop 환경에서 application run 을 실행
+    # production : 실 사용자가 사용하는 환경에서 application run 을 실행
+    # staging : 실 사용자는 없지만, 마지막 테스트 환경에서 application run 을 실행
+    active: none # <dummy, production, staging, none> 옵션
+    include: build, services, security, storage, swagger
+  datasource:
+    #  ================= H2 =================
+    #    driver-class-name: org.h2.Driver
+    #    url: jdbc:h2:tcp://localhost/~/GaePpa
+    #    username: pu
+    #    password:
+    # ================= MySQL =================
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    #    url: ${SPRING_DATASOURCE_URL}
+    #    username: ${MYSQL_USERNAME}
+    #    password: ${MYSQL_PASSWORD}
+    # ================= PostgreSQL =================
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+
+  web:
+    resources:
+      static-locations: classpath:/static/,file:/static/
+
+  backend:
+    url: ${BACKEND_URL}
+
+## 기본 API 경로를 /api 로 설정
+server:
+  servlet:
+    context-path: /api
+
+google:
+  ai:
+    key: ${GOOGLE_AI_API_KEY}

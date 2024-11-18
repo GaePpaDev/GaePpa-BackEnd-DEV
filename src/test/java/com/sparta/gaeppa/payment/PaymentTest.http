@@ -1,0 +1,44 @@
+### 1. orderId 로 Payment 조회
+GET http://localhost:8080/api/v1/payments?orderId=49c9f16e-23dc-41c0-9114-807f9fec21fe
+
+### 결과
+#{
+#  "success": true,
+#  "response": {
+#    "orderId": "0b0bd98d-a374-11ef-a7cd-d8bbc1571db6",
+#    "payStatus": "결제완료",
+#    "payType": "CARD",
+#    "payTransactionCode": "1213683"
+#  }
+#}
+
+### 2. memberId 로 PaymentList 조회
+GET http://localhost:8080/api/v1/payments/memberid?memberId=0b0bd9a1-a374-11ef-a7cd-d8bbc1571db6
+
+### 결과
+#{
+#  "success": true,
+#  "response": [
+#    {
+#      "orderId": "0b0bdd55-a374-11ef-a7cd-d8bbc1571db6",
+#      "payStatus": "결제완료",
+#      "payType": "CARD",
+#      "payTransactionCode": "121233"
+#    }
+#  ]
+#}
+
+### 3. 결제 내역 등록
+### "주문 취소" 주문의 orderId로는 결제 내역 등록 불가
+POST http://localhost:8080/api/v1/payments
+Content-Type: application/json
+
+{
+  "orderId": "54fa3f48-bf78-435d-8970-4efcd734c806",
+  "payType": "CARD",
+  "payTransactionCode": "0005232"
+}
+
+
+### 4. 결제 취소 요청
+PATCH http://localhost:8080/api/v1/payments?payId=666b0da9-7de9-4fa6-a785-5795b38034ef

@@ -1,0 +1,13 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+  # Mail Sender 이메일 서비스
+  mail:
+    username: gokorea1214@naver.com
+    password: ${NAVER_PASSWORD}
+    host: smtp.naver.com
+    port: 465
+    auth-code-expiration-millis: 1800000
