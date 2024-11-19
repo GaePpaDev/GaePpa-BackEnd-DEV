@@ -35,7 +35,8 @@ public class LoginFilter extends CustomJsonEmailPasswordAuthenticationFilter {
 
     private static final String CONTENT_TYPE = "application/json"; // JSON 타입의 데이터로 오는 로그인 요청만 처리
 
-    public LoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, MemberService memberService, JwtUtil jwtUtil, RefreshService refreshService) {
+    public LoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper,
+                       MemberService memberService, JwtUtil jwtUtil, RefreshService refreshService) {
         super(new AntPathRequestMatcher("/v1/members/login", "POST"), authenticationManager, objectMapper);
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
@@ -44,45 +45,56 @@ public class LoginFilter extends CustomJsonEmailPasswordAuthenticationFilter {
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            log.debug("LoginFilter - SecurityContext already contains authentication. Skipping.");
-            return SecurityContextHolder.getContext().getAuthentication();
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException, IOException {
+        try {
+            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                log.debug("LoginFilter - SecurityContext already contains authentication. Skipping.");
+                return SecurityContextHolder.getContext().getAuthentication();
+            }
+
+            if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
+                throw new AuthenticationServiceException("Invalid content type");
+            }
+
+            String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+            Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
+
+            String email = usernamePasswordMap.get("email");
+            String password = usernamePasswordMap.get("password");
+
+            if (email == null || password == null) {
+                throw new AuthenticationServiceException("Missing email or password");
+            }
+
+            Member authenticatedMember = memberService.authenticateMember(email, password);
+            return new UsernamePasswordAuthenticationToken(authenticatedMember.getEmail(), password);
+        } catch (Exception e) {
+            log.error("LoginFilter - Error during authentication: {}", e.getMessage());
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Authentication failed");
         }
-
-        if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) {
-            throw new AuthenticationServiceException("Invalid content type");
-        }
-
-        String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
-        Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
-
-        String email = usernamePasswordMap.get("email");
-        String password = usernamePasswordMap.get("password");
-
-        if (email == null || password == null) {
-            throw new AuthenticationServiceException("Missing email or password");
-        }
-
-        Member authenticatedMember = memberService.authenticateMember(email, password);
-        return new UsernamePasswordAuthenticationToken(authenticatedMember.getEmail(), password);
+        return null;
     }
 
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                                            Authentication authentication) throws IOException, ServletException {
         String email = authentication.getName();
         Member member = memberService.memberLogin(email);
 
-        String newAccess = jwtUtil.createAccessToken("access", member.getMemberId().toString(), member.getRole().toString());
-        String newRefresh = jwtUtil.createRefreshToken("refresh", member.getMemberId().toString(), member.getRole().toString());
+        String newAccess = jwtUtil.createAccessToken("access", member.getMemberId().toString(),
+                member.getRole().toString());
+        String newRefresh = jwtUtil.createRefreshToken("refresh", member.getMemberId().toString(),
+                member.getRole().toString());
 
         refreshService.saveOrUpdateRefreshEntity(member, newRefresh);
         addResponseData(response, newAccess, newRefresh);
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
         // 로그에 자세한 실패 원인 기록
         log.info("로그인에 실패했습니다: {}", failed.getMessage());
 
@@ -100,10 +112,10 @@ public class LoginFilter extends CustomJsonEmailPasswordAuthenticationFilter {
     }
 
     /**
-     *
      * 쿠키에 refreshToken 을 넣어주는 방식
      */
-    private void addResponseData(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    private void addResponseData(HttpServletResponse response, String accessToken, String refreshToken)
+            throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
