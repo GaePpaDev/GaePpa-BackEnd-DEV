@@ -62,11 +62,11 @@
 | 분류 | 상세 |
 | --- | --- |
 | IDE | Intellij |
-| Language | Java 17 |
-| Framework | Spring Boot 3.3.4, Spring Cloud 2023.0.3, Hibernate 6.x, Spring Security, Spring Data JPA |
+| Language | Java 21 |
+| Framework | Spring Boot 3.3.5, Hibernate 6.x, Spring Security, Spring Data JPA |
 | Repository | PostgreSQL |
 | BuildTool | Gradle |
-| Infra | Github, Github Action, AWS EC2, Docker |
+| Infra | Github, AWS EC2, Docker, AWS RDS |
 | Library | Spring Scheduler, Spring WebFlux, Spring Validation, QueryDSL, ElasticSearch, Filebeat, Kibana |
 | API 문서화 | Swagger (SpringDoc OpenAPI) |
 | 인증/보안 | Spring Security, JWT (io.jsonwebtoken) |
