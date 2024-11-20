@@ -98,10 +98,10 @@ public class ReviewService {
             }
         }
 
-        review.delete(userDetails.getUsername());
+        review.delete(userDetails.getMemberId());
 
         Store store = storeRepository.findById(review.getOrder().getStore().getStoreId())
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.STORE_NOT_FOUND));
-        store.updateReviewAvg(review.getReviewScore());
+        store.rollbackReviewAvg(review.getReviewScore());
     }
 }

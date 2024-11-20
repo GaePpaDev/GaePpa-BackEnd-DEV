@@ -129,9 +129,16 @@ public class Store extends BaseEntity {
     public void rollbackReviewAvg(int canceledReviewScore) {
 
         this.reviewCount--;
-        this.reviewAvg = this.reviewAvg.multiply(BigDecimal.valueOf(reviewCount + 1))
+
+        if(this.reviewCount == 0) {
+            this.reviewAvg = BigDecimal.valueOf(0);
+        }
+
+        if(this.reviewCount > 0) {
+            this.reviewAvg = this.reviewAvg.multiply(BigDecimal.valueOf(reviewCount + 1))
                 .subtract(BigDecimal.valueOf(canceledReviewScore))
                 .divide(BigDecimal.valueOf(reviewCount), BigDecimal.ROUND_UNNECESSARY);
+        }
     }
 
 
