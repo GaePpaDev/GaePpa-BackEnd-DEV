@@ -85,11 +85,11 @@ public class ProductService {
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.PRODUCT_NOT_FOUND));
 
         if (userDetails.getMemberRole() != MemberRole.MASTER && userDetails.getMemberRole() != MemberRole.MANAGER
-                && !product.getCreatedBy().equals(userDetails.getUsername())) {
+                && !product.getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
-        product.delete(userDetails.getUsername());
+        product.delete(userDetails.getMemberId());
     }
 
     @Transactional

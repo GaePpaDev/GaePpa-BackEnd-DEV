@@ -64,10 +64,10 @@ public class ReviewImageService {
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.PRODUCT_IMAGE_NOT_FOUND));
 
         if (userDetails.getMemberRole() != MemberRole.MANAGER && userDetails.getMemberRole() != MemberRole.OWNER
-                && !reviewImage.getCreatedBy().equals(userDetails.getUsername())) {
+                && !reviewImage.getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
-        reviewImage.delete(userDetails.getUsername());
+        reviewImage.delete(userDetails.getMemberId());
     }
 }

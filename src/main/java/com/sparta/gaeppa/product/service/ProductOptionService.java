@@ -69,10 +69,10 @@ public class ProductOptionService {
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.PRODUCT_OPTION_NOT_FOUND));
 
         if (userDetails.getMemberRole() != MemberRole.MASTER && userDetails.getMemberRole() != MemberRole.MANAGER
-                && !productOption.getCreatedBy().equals(userDetails.getUsername())) {
+                && !productOption.getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
-        productOption.delete(userDetails.getUsername());
+        productOption.delete(userDetails.getMemberId());
     }
 }

@@ -34,7 +34,7 @@ public class ProductImageService {
         this.productRepository = productRepository;
         this.storageService.createDirectory(PRODUCT_IMAGE_PATH);
     }
-    
+
     public ImageResponseDto uploadProductImage(String productId, MultipartFile file) {
 
         Product product = productRepository.findById(UUID.fromString(productId))
@@ -72,10 +72,10 @@ public class ProductImageService {
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.PRODUCT_IMAGE_NOT_FOUND));
 
         if (userDetails.getMemberRole() != MemberRole.MANAGER && userDetails.getMemberRole() != MemberRole.OWNER
-                && !productImage.getCreatedBy().equals(userDetails.getUsername())) {
+                && !productImage.getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
-        productImage.delete(userDetails.getUsername());
+        productImage.delete(userDetails.getMemberId());
     }
 }

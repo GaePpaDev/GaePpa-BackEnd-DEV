@@ -91,6 +91,6 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.REVIEW_NOT_FOUND));
 
-        review.delete(userDetails.getUsername());
+        review.delete(userDetails.getMemberId());
     }
 }
