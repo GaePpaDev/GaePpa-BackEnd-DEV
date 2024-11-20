@@ -54,7 +54,7 @@ public class JwtUtil {
 
 
     public UUID getMemberId(String token) {
-        return parseToken(token).get(MEMBERPK_CLAIM_KEY, UUID.class);
+        return UUID.fromString(parseToken(token).get(MEMBERPK_CLAIM_KEY, String.class));
     }
 
     public String getCategory(String token) {

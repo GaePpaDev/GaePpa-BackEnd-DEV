@@ -4,31 +4,18 @@ import com.sparta.gaeppa.security.jwts.entity.CustomUserDetails;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuditorAwareImpl implements AuditorAware<String> {
+public class AuditorAwareImpl implements AuditorAware<UUID> {
 
     @Override
-    public Optional<String> getCurrentAuditor() {
-        if (SecurityContextHolder.getContext() == null) {
-            return Optional.empty();
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() ||
-                authentication.getPrincipal() instanceof String) {
-            return Optional.empty();
-        }
-
-        if (authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-            return Optional.of(user.getUsername());
-        }
-
-        return Optional.empty();
+    @NonNull
+    public Optional<UUID> getCurrentAuditor() {
+        return getCurrentUserId();
     }
 
     public Optional<UUID> getCurrentUserId() {

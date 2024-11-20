@@ -34,7 +34,7 @@ public class ProductOptionCategoryService {
                         ExceptionStatus.PRODUCT_NOT_FOUND));
 
         if (userDetails.getMemberRole() != MemberRole.MASTER && userDetails.getMemberRole() != MemberRole.MANAGER
-                && !product.getCreatedBy().equals(userDetails.getUsername())) {
+                && !product.getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
@@ -53,7 +53,7 @@ public class ProductOptionCategoryService {
                         ExceptionStatus.PRODUCT_OPTION_CATEGORY_NOT_FOUND));
 
         if (userDetails.getMemberRole() != MemberRole.MASTER && userDetails.getMemberRole() != MemberRole.MANAGER
-                && !productOptionCategory.getProduct().getCreatedBy().equals(userDetails.getUsername())) {
+                && !productOptionCategory.getProduct().getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
@@ -69,7 +69,7 @@ public class ProductOptionCategoryService {
 
         if (userDetails.getMemberRole() != MemberRole.MASTER
                 && userDetails.getMemberRole() != MemberRole.MANAGER
-                && !productOptionCategory.getProduct().getCreatedBy().equals(userDetails.getUsername())) {
+                && !productOptionCategory.getProduct().getCreatedBy().equals(userDetails.getMemberId())) {
             throw new ServiceException(ExceptionStatus.UNAUTHORIZED);
         }
 
@@ -77,6 +77,6 @@ public class ProductOptionCategoryService {
             throw new ServiceException(ExceptionStatus.PRODUCT_OPTION_CATEGORY_HAS_OPTIONS);
         }
 
-        productOptionCategory.delete(userDetails.getUsername());
+        productOptionCategory.delete(userDetails.getMemberId());
     }
 }
