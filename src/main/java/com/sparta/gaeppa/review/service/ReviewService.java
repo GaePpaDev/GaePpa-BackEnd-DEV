@@ -93,7 +93,7 @@ public class ReviewService {
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.REVIEW_NOT_FOUND));
 
         if(userDetails.getMemberRole() == MemberRole.CUSTOMER) {
-            if(userDetails.getMemberId() != review.getOrder().getMember().getMemberId()) {
+            if(userDetails.getMemberId().equals(review.getOrder().getMember().getMemberId())) {
                 throw new ServiceException(ExceptionStatus.ACCESS_DENIED);
             }
         }
