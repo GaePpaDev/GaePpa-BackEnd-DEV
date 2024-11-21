@@ -2,6 +2,7 @@ package com.sparta.gaeppa.review.service;
 
 import com.sparta.gaeppa.global.exception.ExceptionStatus;
 import com.sparta.gaeppa.global.exception.ServiceException;
+import com.sparta.gaeppa.members.entity.MemberRole;
 import com.sparta.gaeppa.order.entity.OrderStatus;
 import com.sparta.gaeppa.order.entity.Orders;
 import com.sparta.gaeppa.order.repository.OrderRepository;
@@ -85,12 +86,22 @@ public class ReviewService {
     }
 
     @Transactional
-    @PreAuthorize("hasAnyRole('ROLE_MASTER', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_MASTER', 'ROLE_MANAGER', 'ROLE_CUSTOMER')")
     public void deleteReview(UUID reviewId, CustomUserDetails userDetails) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ServiceException(ExceptionStatus.REVIEW_NOT_FOUND));
 
+        if(userDetails.getMemberRole() == MemberRole.CUSTOMER) {
+            if(userDetails.getMemberId().equals(review.getOrder().getMember().getMemberId())) {
+                throw new ServiceException(ExceptionStatus.ACCESS_DENIED);
+            }
+        }
+
         review.delete(userDetails.getMemberId());
+
+        Store store = storeRepository.findById(review.getOrder().getStore().getStoreId())
+                .orElseThrow(() -> new ServiceException(ExceptionStatus.STORE_NOT_FOUND));
+        store.rollbackReviewAvg(review.getReviewScore());
     }
 }

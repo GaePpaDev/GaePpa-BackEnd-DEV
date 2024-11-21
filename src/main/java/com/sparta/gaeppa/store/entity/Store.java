@@ -122,6 +122,24 @@ public class Store extends BaseEntity {
         this.reviewCount++;
         this.reviewAvg = this.reviewAvg.multiply(BigDecimal.valueOf(reviewCount - 1))
                 .add(BigDecimal.valueOf(newReviewScore))
-                .divide(BigDecimal.valueOf(reviewCount), 2, RoundingMode.HALF_UP); // 소수점 둘째 자리에서 반올림
+                .divide(BigDecimal.valueOf(reviewCount), BigDecimal.ROUND_UNNECESSARY);
     }
+
+    // Review 삭제시 업데이트시키는 메서드
+    public void rollbackReviewAvg(int canceledReviewScore) {
+
+        this.reviewCount--;
+
+        if(this.reviewCount == 0) {
+            this.reviewAvg = BigDecimal.valueOf(0);
+        }
+
+        if(this.reviewCount > 0) {
+            this.reviewAvg = this.reviewAvg.multiply(BigDecimal.valueOf(reviewCount + 1))
+                .subtract(BigDecimal.valueOf(canceledReviewScore))
+                .divide(BigDecimal.valueOf(reviewCount), BigDecimal.ROUND_UNNECESSARY);
+        }
+    }
+
+
 }
