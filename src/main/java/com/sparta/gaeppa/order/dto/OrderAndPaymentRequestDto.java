@@ -19,7 +19,6 @@ public class OrderAndPaymentRequestDto {
     private UUID storeId;
     private AddressDto address;
     private String orderType;
-    private int totalPrice;
     private String orderRequest;
     private List<OrderProductDto> orderProductList;
 

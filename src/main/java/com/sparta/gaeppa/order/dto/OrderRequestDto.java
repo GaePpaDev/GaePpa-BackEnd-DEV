@@ -23,7 +23,6 @@ public class OrderRequestDto {
     private Store store;
     private AddressDto address;
     private String orderType;
-    private int totalPrice;
     private String orderRequest;
     private List<OrderProductDto> orderProductList;
 
